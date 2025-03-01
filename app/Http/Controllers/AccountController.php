@@ -10,17 +10,13 @@ use Illuminate\Support\Facades\Validator;
 
 class AccountController extends Controller
 {
-
-    
-    //this file view register page
+    // This method shows the register page
     public function register()
     {
         return view('account.register');
     }
 
-
-
-    //this methode will register a user 
+    // This method registers a user
     public function processRegister(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -28,67 +24,79 @@ class AccountController extends Controller
             'password' => 'required|confirmed|min:5',
             'name' => 'required|min:3',
             'password_confirmation' => 'required'
-
         ]);
-        if ($validator->passes()) {
-            $user = new User();
-            $user->name = $request->name;
-            $user->email = $request->email;
-            $user->password = Hash::make($request->password);
-            $user->role = 'user';
-            $user->save();
 
-            return redirect()->route('account.login')->with('success', 'You have registed successfully');
-
-
-        } else {
+        if ($validator->fails()) {
             return redirect()->route('account.register')->withInput()->withErrors($validator);
         }
+
+        $user = new User();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = Hash::make($request->password);
+        $user->role = 'user';
+        $user->save();
+
+        return redirect()->route('account.login')->with('success', 'You have registered successfully.');
     }
 
-    //this methode for show login page 
+    // This method shows the login page
     public function login()
     {
         return view('account.login');
     }
 
-
-
-      //this methode for authenticate user 
-
+    // This method authenticates the user
     public function authenticate(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required'
-
         ]);
-        if ($validator->passes()) {
-            if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-                return redirect()->route('account.profile')->with('Enter email or Password is incorrect');
 
-            } else {
-                return redirect()->route('account.login')->withInput()->with('error', 'Enter email or Password is incorrect');
-            }
-        } else {
+        if ($validator->fails()) {
             return redirect()->route('account.login')->withInput()->withErrors($validator);
         }
 
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            return redirect()->route('account.profile')->with('success', 'Login successful.');
+        }
+
+        return redirect()->route('account.login')->withInput()->with('error', 'Email or password is incorrect.');
     }
 
-    //this methode for show profile page 
-
+    // This method shows the profile page
     public function profile()
     {
-        return view('account.profile');
+        $user = User::find(Auth::id());
+
+        return view('account.profile', compact('user'));
     }
 
-    //this methode for logout user
+    // This method updates the user profile
+    public function updateProfile(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|min:3',
+            'email' => 'required|email|unique:users,email,' . Auth::id(),
+        ]);
 
-    public function logout(){
+        if ($validator->fails()) {
+            return redirect()->route('account.profile')->withInput()->withErrors($validator);
+        }
+
+        $user = User::find(Auth::id());
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->save();
+
+        return redirect()->route('account.profile')->with('success', 'Profile updated successfully.');
+    }
+
+    // This method logs out the user
+    public function logout()
+    {
         Auth::logout();
-        return redirect()->route('account.login');
-     }
-
-
+        return redirect()->route('account.login')->with('success', 'You have logged out.');
+    }
 }
