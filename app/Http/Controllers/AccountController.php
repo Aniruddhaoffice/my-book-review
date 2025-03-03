@@ -1,12 +1,16 @@
 <?php
 
 namespace App\Http\Controllers;
+use Storage\app\public;
 
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
+
 
 class AccountController extends Controller
 {
@@ -73,21 +77,64 @@ class AccountController extends Controller
         return view('account.profile', compact('user'));
     }
 
-    // This method updates the user profile
+    // This method updates the user profile with image
     public function updateProfile(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $user = Auth::user();
+
+        $rules = [
             'name' => 'required|min:3',
-            'email' => 'required|email|unique:users,email,' . Auth::id(),
-        ]);
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', // Validate image file types and size
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
             return redirect()->route('account.profile')->withInput()->withErrors($validator);
         }
 
-        $user = User::find(Auth::id());
         $user->name = $request->name;
         $user->email = $request->email;
+
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+
+            $uploadPath = public_path('uploads/profile/');
+            $thumbPath = public_path('uploads/profile/thumb/');
+
+            // Ensure directories exist
+            if (!file_exists($uploadPath)) {
+                mkdir($uploadPath, 0755, true);
+            }
+            if (!file_exists($thumbPath)) {
+                mkdir($thumbPath, 0755, true);
+            }
+
+            // Process and save the image
+            $manager = new ImageManager(new Driver());
+            $img = $manager->read($image->getRealPath());
+
+            // Resize and save thumbnail
+            $img->cover(150, 150);
+            $img->save($thumbPath . $imageName);
+
+            // Save the main image
+            $image->move($uploadPath, $imageName);
+
+            // Delete old image if it exists
+            if ($user->image && file_exists($uploadPath . $user->image)) {
+                unlink($uploadPath . $user->image);
+            }
+            if ($user->image && file_exists($thumbPath . $user->image)) {
+                unlink($thumbPath . $user->image);
+            }
+
+            // Update user image
+            $user->image = $imageName;
+        }
+
         $user->save();
 
         return redirect()->route('account.profile')->with('success', 'Profile updated successfully.');
