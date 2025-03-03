@@ -6,15 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Book Review App</title>
     <link rel="stylesheet" href="https://unpkg.com/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+
     <link rel="stylesheet" href="{{ asset('css/style.css')}}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
 <body class="bg-light">
     <div class="container-fluid shadow-lg header">
         <div class="container">
             <div class="d-flex justify-content-between">
-                <h1 class="text-center"><a href="index.html" class="h3 text-white text-decoration-none">Book Review
-                        App</a></h1>
+                <h1 class="text-center"><a href="index.html" class="h3 text-white text-decoration-none">MY Reading...</a></h1>
                 <div class="d-flex align-items-center navigation">
                     @if (Auth::check())
                         <a href="{{ route('account.profile') }}" class="text-white">My Account</a>
