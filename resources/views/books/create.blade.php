@@ -37,112 +37,55 @@
                 @include('layouts.message')
                 <div class="card border-0 shadow">
                     <div class="card-header  text-white">
-                        Books
+                        Add Book
                     </div>
-                    <div class="card-body pb-0">
-                        <a href="add-book.html" class="btn btn-primary">Add Book</a>
-                        <table class="table  table-striped mt-3">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th>Title</th>
-                                    <th>Author</th>
-                                    <th>Rating</th>
-                                    <th>Status</th>
-                                    <th width="150">Action</th>
-                                </tr>
-                            <tbody>
-                                <tr>
-                                    <td>Atomic Habits</td>
-                                    <td>James Clear</td>
-                                    <td>3.0 (3 Reviews)</td>
-                                    <td>Active</td>
-                                    <td>
-                                        <a href="#" class="btn btn-success btn-sm"><i class="fa-regular fa-star"></i></a>
-                                        <a href="edit-book.html" class="btn btn-primary btn-sm"><i
-                                                class="fa-regular fa-pen-to-square"></i>
-                                        </a>
-                                        <a href="" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Atomic Habits</td>
-                                    <td>James Clear</td>
-                                    <td>3.0 (3 Reviews)</td>
-                                    <td>Active</td>
-                                    <td>
-                                        <a href="#" class="btn btn-success btn-sm"><i class="fa-regular fa-star"></i></a>
-                                        <a href="edit-book.html" class="btn btn-primary btn-sm"><i
-                                                class="fa-regular fa-pen-to-square"></i>
-                                        </a>
-                                        <a href="" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Atomic Habits</td>
-                                    <td>James Clear</td>
-                                    <td>3.0 (3 Reviews)</td>
-                                    <td>Active</td>
-                                    <td>
-                                        <a href="#" class="btn btn-success btn-sm"><i class="fa-regular fa-star"></i></a>
-                                        <a href="edit-book.html" class="btn btn-primary btn-sm"><i
-                                                class="fa-regular fa-pen-to-square"></i>
-                                        </a>
-                                        <a href="" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Atomic Habits</td>
-                                    <td>James Clear</td>
-                                    <td>3.0 (3 Reviews)</td>
-                                    <td>Active</td>
-                                    <td>
-                                        <a href="#" class="btn btn-success btn-sm"><i class="fa-regular fa-star"></i></a>
-                                        <a href="edit-book.html" class="btn btn-primary btn-sm"><i
-                                                class="fa-regular fa-pen-to-square"></i>
-                                        </a>
-                                        <a href="" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Atomic Habits</td>
-                                    <td>James Clear</td>
-                                    <td>3.0 (3 Reviews)</td>
-                                    <td>Active</td>
-                                    <td>
-                                        <a href="#" class="btn btn-success btn-sm"><i class="fa-regular fa-star"></i></a>
-                                        <a href="edit-book.html" class="btn btn-primary btn-sm"><i
-                                                class="fa-regular fa-pen-to-square"></i>
-                                        </a>
-                                        <a href="" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Atomic Habits</td>
-                                    <td>James Clear</td>
-                                    <td>3.0 (3 Reviews)</td>
-                                    <td>Active</td>
-                                    <td>
-                                        <a href="#" class="btn btn-success btn-sm"><i class="fa-regular fa-star"></i></a>
-                                        <a href="edit-book.html" class="btn btn-primary btn-sm"><i
-                                                class="fa-regular fa-pen-to-square"></i>
-                                        </a>
-                                        <a href="" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></a>
-                                    </td>
-                                </tr>
-                            </tbody>
-                            </thead>
-                        </table>
-                        <nav aria-label="Page navigation ">
-                            <ul class="pagination">
-                                <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                            </ul>
-                        </nav>
-                    </div>
+                    <div class="card-body">
+                            <form action="{{ route('books.store') }}" method="POST" enctype="multipart/form-data">
+                                @csrf
+                                <div class="mb-3">
+                                    <label for="title" class="form-label">Title</label>
+                                    <input type="text" class="form-control @error('title') is-invalid @enderror"
+                                        placeholder="Title" name="title" id="title" value="{{old('title')}}" />
+                                    @error('title')
+                                        <p class="invalid-feedback">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                <div class="mb-3">
+                                    <label for="author" class="form-label">Author</label>
+                                    <input type="text" class="form-control @error('author') is-invalid @enderror"
+                                        placeholder="Author" name="author" id="author" value="{{old('author')}}" />
+                                    @error('author')
+                                        <p class="invalid-feedback">{{ $message }}</p>
+                                    @enderror
+                                </div>
 
+                                <div class="mb-3">
+                                    <label for="author" class="form-label">Description</label>
+                                    <textarea name="description" id="description" class="form-control" placeholder="Description"
+                                        cols="30" rows="5" value="{{old('description')}}" ></textarea>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="Image" class="form-label">Image</label>
+                                    <input type="file" class="form-control @error('image') is-invalid @enderror" name="image"
+                                        id="image" />
+                                    @error('image')
+                                        <p class="invalid-feedback">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="author" class="form-label">Status</label>
+                                    <select name="status" id="status" class="form-control">
+                                        <option value="1">Active</option>
+                                        <option value="0">Block</option>
+                                    </select>
+                                </div>
+
+
+                                <button class="btn btn-primary mt-2">Create</button>
+                            </form>
+                    </div>
                 </div>
             </div>
         </div>
